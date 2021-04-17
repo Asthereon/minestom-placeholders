@@ -23,12 +23,12 @@ public class PlaceholderManager {
     }
 
     /**
-     * Add your placeholders to this method to load them for use
+     * Loads the default placeholders for use, call this before trying to use any of the default placeholders
      *  Example:
      *      new PlayerPlaceholder().register();
      */
-    public static void registerPlaceholders() {
-        System.out.println("[Placeholders] Registering placeholders...");
+    public static void registerDefaultPlaceholders() {
+        System.out.println("[Placeholders] Registering default placeholders...");
         new PlayerPlaceholder().register();
     }
 
