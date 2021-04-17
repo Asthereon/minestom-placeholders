@@ -11,9 +11,9 @@ public class PlaceholderManager {
     // Instance
     private static final PlaceholderManager instance = new PlaceholderManager();
 
-    private static final String PLACEHOLDER_START = "{{";
-    private static final String PLACEHOLDER_END = "}}";
-    private static final String PLACEHOLDER_SEPARATOR = "_";
+    private static final String PLACEHOLDER_START = "{{";       // Indicates the start of a placeholder string
+    private static final String PLACEHOLDER_END = "}}";         // Indicates the end of a placeholder string
+    private static final String PLACEHOLDER_SEPARATOR = "_";    // Indicates the separation between the placeholder nodes
     private static final HashMap<String, Placeholder> placeholders = new HashMap<>();
 
     private PlaceholderManager() { }
@@ -33,10 +33,10 @@ public class PlaceholderManager {
     }
 
     /**
-     * Registers a placeholder
+     * Registers a placeholder, automatically called by the Placeholder.register() method
      * @param placeholder the placeholder to register
      */
-    public static void register(Placeholder placeholder) {
+    protected static void register(Placeholder placeholder) {
         PlaceholderManager.getInstance()._register(placeholder);
     }
 
@@ -86,14 +86,23 @@ public class PlaceholderManager {
 
                         // Store any placeholder arguments (indexes 2 and above)
                         String[] placeholderArguments = Arrays.copyOfRange(parsedPlaceholder, 1, parsedPlaceholder.length);
+
+                        // Get the replacement value for the placeholder
                         String replacementValue = placeholders.get(prefix).replace(player, placeholderType, placeholderArguments);
+
+                        // IF the replacement value comes back valid
                         if (replacementValue != null) {
-                            mayContainPlaceholders = mayContainPlaceholders.replace(PLACEHOLDER_START + StringUtils.join(parsedPlaceholder, PLACEHOLDER_SEPARATOR) + PLACEHOLDER_END, replacementValue);
+                            // Create the replacement string
+                            String replacementString = PLACEHOLDER_START + StringUtils.join(parsedPlaceholder, PLACEHOLDER_SEPARATOR) + PLACEHOLDER_END;
+
+                            // Update the placeholder in the provided string
+                            mayContainPlaceholders = mayContainPlaceholders.replace(replacementString, replacementValue);
                         }
                     }
                 }
             }
         }
+
         return mayContainPlaceholders;
     }
 }
