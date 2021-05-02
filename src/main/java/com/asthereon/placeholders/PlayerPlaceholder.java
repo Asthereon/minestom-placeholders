@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
  *  player_health_int   the player's health as an integer
  *  player_food         the player's food
  *  player_saturation   the player's saturation
+ *  player_username     the player's username
  */
 public class PlayerPlaceholder extends Placeholder {
 
@@ -35,6 +36,8 @@ public class PlayerPlaceholder extends Placeholder {
             // player_saturation
             case "saturation":
                 return Float.toString(player.getFoodSaturation());
+            case "username":
+                return player.getUsername();
         }
 
         // If the placeholderType doesn't match anything, return null to avoid replacing the placeholder with a blank string

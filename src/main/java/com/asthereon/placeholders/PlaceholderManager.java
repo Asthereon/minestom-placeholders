@@ -1,5 +1,8 @@
 package com.asthereon.placeholders;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minestom.server.entity.Player;
 import org.apache.commons.lang3.StringUtils;
 
@@ -104,5 +107,25 @@ public class PlaceholderManager {
         }
 
         return mayContainPlaceholders;
+    }
+
+    /**
+     * Replaces all valid placeholders in a string, then parses the string into a Component using MiniMessage
+     * @param player the player who should be used for the data to fill in the placeholders
+     * @param mayContainPlaceholders a string that may contain placeholders to be replaced
+     * @return the Component with all valid placeholders replaced with their values and parsed by MiniMessage
+     */
+    public static Component getComponent(Player player, String mayContainPlaceholders) {
+        return MiniMessage.get().parse(PlaceholderManager.replacePlaceholders(player, mayContainPlaceholders));
+    }
+
+    /**
+     * Replaces all valid placeholders in a Component using MiniMessage
+     * @param player the player who should be used for the data to fill in the placeholders
+     * @param mayContainPlaceholders a Component that may contain placeholders to be replaced
+     * @return the Component with all valid placeholders replaced with their values and parsed by MiniMessage
+     */
+    public static Component getComponent(Player player, Component mayContainPlaceholders) {
+        return GsonComponentSerializer.gson().deserialize(replacePlaceholders(player, GsonComponentSerializer.gson().serialize(mayContainPlaceholders)));
     }
 }
