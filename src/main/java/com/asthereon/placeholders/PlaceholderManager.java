@@ -155,15 +155,10 @@ public class PlaceholderManager {
      */
     public static ItemStack getItemStack(Player player, ItemStack itemStack) {
         Component displayName = PlaceholderManager.getComponent(player, itemStack.getDisplayName());
-
-        List<Component> lore = itemStack.getLore();
-        List<Component> newLore = new ArrayList<>();
-        for (Component component : lore) {
-            newLore.add(PlaceholderManager.getComponent(player, component));
-        }
+        List<Component> lore = getComponent(player, itemStack.getLore());
 
         return itemStack
                 .withDisplayName(displayName)
-                .withLore(newLore);
+                .withLore(lore);
     }
 }
