@@ -4,19 +4,22 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minestom.server.entity.Player;
+import net.minestom.server.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class PlaceholderManager {
 
     // Instance
     private static final PlaceholderManager instance = new PlaceholderManager();
 
-    private static final String PLACEHOLDER_START = "{{";       // Indicates the start of a placeholder string
-    private static final String PLACEHOLDER_END = "}}";         // Indicates the end of a placeholder string
-    private static final String PLACEHOLDER_SEPARATOR = "_";    // Indicates the separation between the placeholder nodes
+    public static final String PLACEHOLDER_START = "{{";       // Indicates the start of a placeholder string
+    public static final String PLACEHOLDER_END = "}}";         // Indicates the end of a placeholder string
+    public static final String PLACEHOLDER_SEPARATOR = "_";    // Indicates the separation between the placeholder nodes
     private static final HashMap<String, Placeholder> placeholders = new HashMap<>();
 
     private PlaceholderManager() { }
@@ -110,22 +113,57 @@ public class PlaceholderManager {
     }
 
     /**
-     * Replaces all valid placeholders in a string, then parses the string into a Component using MiniMessage
+     * Replaces all valid placeholders in a string, then parses the string into a Component
      * @param player the player who should be used for the data to fill in the placeholders
      * @param mayContainPlaceholders a string that may contain placeholders to be replaced
-     * @return the Component with all valid placeholders replaced with their values and parsed by MiniMessage
+     * @return the Component with all valid placeholders replaced with their values
      */
     public static Component getComponent(Player player, String mayContainPlaceholders) {
         return MiniMessage.get().parse(PlaceholderManager.replacePlaceholders(player, mayContainPlaceholders));
     }
 
     /**
-     * Replaces all valid placeholders in a Component using MiniMessage
+     * Replaces all valid placeholders in a Component
      * @param player the player who should be used for the data to fill in the placeholders
      * @param mayContainPlaceholders a Component that may contain placeholders to be replaced
-     * @return the Component with all valid placeholders replaced with their values and parsed by MiniMessage
+     * @return the Component with all valid placeholders replaced with their values
      */
     public static Component getComponent(Player player, Component mayContainPlaceholders) {
         return GsonComponentSerializer.gson().deserialize(replacePlaceholders(player, GsonComponentSerializer.gson().serialize(mayContainPlaceholders)));
+    }
+
+    /**
+     * Replaces all valid placeholders in a list of Components
+     * @param player the player who should be used for the data to fill in the placeholders
+     * @param mayContainPlaceholders a Component that may contain placeholders to be replaced
+     * @return the Component with all valid placeholders replaced with their values
+     */
+    public static List<Component> getComponent(Player player, List<Component> mayContainPlaceholders) {
+        List<Component> parsedComponents = new ArrayList<>();
+        for (Component component : mayContainPlaceholders) {
+            parsedComponents.add(getComponent(player, component));
+        }
+        return parsedComponents;
+    }
+
+    /**
+     *
+     * Replaces all valid placeholders in the name and lore of an ItemStack
+     * @param player the player who should be used for the data to fill in the placeholders
+     * @param itemStack an ItemStack that may contain placeholders to be replaced
+     * @return the ItemStack with all valid placeholders in the name and lore replaced with their values
+     */
+    public static ItemStack getItemStack(Player player, ItemStack itemStack) {
+        Component displayName = PlaceholderManager.getComponent(player, itemStack.getDisplayName());
+
+        List<Component> lore = itemStack.getLore();
+        List<Component> newLore = new ArrayList<>();
+        for (Component component : lore) {
+            newLore.add(PlaceholderManager.getComponent(player, component));
+        }
+
+        return itemStack
+                .withDisplayName(displayName)
+                .withLore(newLore);
     }
 }
